@@ -3,4 +3,4 @@ project(LinesLoader)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(${PROJECT_NAME}  main.cpp Observer.h Subject.h)
+add_executable(${PROJECT_NAME}  main.cpp Observer.h Subject.h LinesLoader.cpp LinesLoader.h ProgressBar.cpp ProgressBar.h)
