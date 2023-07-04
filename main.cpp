@@ -4,7 +4,7 @@
 
 int main() {
     std::cout << "Hello, World!" << std::endl;
-    LinesLoader myLoader("/home/mario/CLionProjects/LinesLoader/prova.txt");
+    LinesLoader myLoader("../prova.txt");
     ProgressBar myPB(&myLoader);
     myLoader.loadLines();
     myLoader.print();
