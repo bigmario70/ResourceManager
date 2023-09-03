@@ -1,8 +1,9 @@
 #include <iostream>
 
-// For compilers that support precompilation, includes "wx/wx.h".
-#include <wx/wxprec.h>
+// For compilers that support pre-compilation, includes "wx/wx.h".
+
 #ifndef WX_PRECOMP
+#include <wx/wxprec.h>
 #include <wx/wx.h>
 #endif
 
@@ -16,11 +17,6 @@ public:
 };
 
 wxIMPLEMENT_APP(MyApp);
-
-
-
-
-
 
 
 class MyFrame : public wxFrame
@@ -54,7 +50,7 @@ bool MyApp::OnInit() {
 MyFrame::MyFrame()
         : wxFrame(nullptr, wxID_ANY, "Lines Loader"),myLoader(LinesLoader("../prova.txt"))
 {
-    ProgressBar myPB(&myLoader);
+
     wxMenu *menuFile = new wxMenu;
     menuFile->Append(ID_Hello, "&Hello...\tCtrl-H",
                      "Help string shown in status bar for this menu item");
@@ -86,7 +82,7 @@ MyFrame::MyFrame()
 
 void MyFrame::OnExit(wxCommandEvent& event)
 {
-    myLoader.print();
+
     Close(true);
 }
 
@@ -103,6 +99,10 @@ void MyFrame::OnHello(wxCommandEvent& event)
 
 void MyFrame::OnStart(wxCommandEvent& event)
 {
-    wxLogMessage("Hello world from wxWidgets!");
+    ProgressBar myPB(&myLoader,this);
     myLoader.loadLines();
+    auto lines =myLoader.getLines();
+    wxTextCtrl* textCtrl= new wxTextCtrl(this,10,wxEmptyString,wxDefaultPosition,wxSize(240,100),wxTE_MULTILINE);
+    for (auto line: lines)
+        textCtrl->AppendText(line+"\n");
 }

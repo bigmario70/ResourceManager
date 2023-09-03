@@ -6,13 +6,19 @@
 #define LINESLOADER_PROGRESSBAR_H
 
 #include <iostream>
+#ifndef WX_PRECOMP
+#include <wx/wxprec.h>
+#include <wx/wx.h>
+#include <wx/progdlg.h>
+#endif
+
 #include "Observer.h"
 #include "LinesLoader.h"
 
-class ProgressBar : public Observer{
+class ProgressBar : public Observer, public wxProgressDialog{
 public:
 
-    explicit ProgressBar(LinesLoader * ll): linesLoader(ll){
+    explicit ProgressBar(LinesLoader * ll, wxWindow* parent): wxProgressDialog(wxT("Wait..."), wxT("Keep waiting..."), 100,parent,wxPD_ELAPSED_TIME|wxPD_ESTIMATED_TIME |wxPD_REMAINING_TIME| wxPD_APP_MODAL) ,linesLoader(ll){
         linesLoader->subscribe(this);
 
     }
@@ -20,7 +26,8 @@ public:
         linesLoader->unsubscribe(this);
     }
     void update() override{
-        std::cout << "Lines Loading Progress: " << linesLoader->getProgress()<<std::endl;
+        wxMilliSleep(250);
+        this->Update(linesLoader->getProgress());
     }
 private:
     LinesLoader * linesLoader;

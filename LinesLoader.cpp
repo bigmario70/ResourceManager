@@ -58,8 +58,6 @@ int LinesLoader::getProgress() const{
     return progress;
 }
 
-void LinesLoader::print() const{
-    int lineNumber=0;
-    for (auto line: lines)
-        std::cout << ++lineNumber <<line << std::endl;
+const std::vector<std::string>& LinesLoader::getLines() const{
+    return lines;
 }

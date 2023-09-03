@@ -20,7 +20,7 @@ public:
     void unsubscribe(Observer *o) override;
     int getProgress() const;
 
-    void print() const;
+    const std::vector<std::string>& getLines() const;
     void loadLines();
 
 private:
