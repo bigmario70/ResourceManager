@@ -2,8 +2,8 @@
 // Created by mario on 21/06/23.
 //
 
-#ifndef LINESLOADER_LINESLOADER_H
-#define LINESLOADER_LINESLOADER_H
+#ifndef LINESLOADER_RESOURCELOADER_H
+#define LINESLOADER_RESOURCELOADER_H
 
 
 #include <list>
@@ -11,10 +11,10 @@
 #include "Subject.h"
 #include <vector>
 
-class LinesLoader : public Subject {
+class ResourceLoader : public Subject {
 public:
-    LinesLoader(const std::string& fn):filename(fn){}
-    virtual ~LinesLoader () {}
+    ResourceLoader(const std::string& fn): filename(fn){}
+    virtual ~ResourceLoader () {}
     void notify() override;
     void subscribe(Observer *o) override;
     void unsubscribe(Observer *o) override;
@@ -31,4 +31,4 @@ private:
 };
 
 
-#endif //LINESLOADER_LINESLOADER_H
+#endif //LINESLOADER_RESOURCELOADER_H

@@ -3,27 +3,27 @@
 //
 
 #include <iostream>
-#include "LinesLoader.h"
+#include "ResourceLoader.h"
 #include <fstream>
 #include <string>
 #include <limits>
 
 
-void LinesLoader::notify() {
+void ResourceLoader::notify() {
     for (auto observer : observers)
         observer->update();
 }
 
-void LinesLoader::subscribe(Observer* o) {
+void ResourceLoader::subscribe(Observer* o) {
     observers.push_back(o);
 }
 
-void LinesLoader::unsubscribe(Observer* o) {
+void ResourceLoader::unsubscribe(Observer* o) {
     observers.remove(o);
 }
 
-void LinesLoader::loadLines(){
-    constexpr auto max_size = std::numeric_limits<std::streamsize>::max();
+void ResourceLoader::loadLines(){
+    // constexpr auto max_size = std::numeric_limits<std::streamsize>::max();
     std::ifstream infile;
     infile.open(filename, std::ifstream::in);
     if (infile.is_open()){
@@ -54,10 +54,10 @@ void LinesLoader::loadLines(){
     }
 }
 
-int LinesLoader::getProgress() const{
+int ResourceLoader::getProgress() const{
     return progress;
 }
 
-const std::vector<std::string>& LinesLoader::getLines() const{
+const std::vector<std::string>& ResourceLoader::getLines() const{
     return lines;
 }

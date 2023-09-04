@@ -13,12 +13,12 @@
 #endif
 
 #include "Observer.h"
-#include "LinesLoader.h"
+#include "ResourceLoader.h"
 
 class ProgressBar : public Observer, public wxProgressDialog{
 public:
 
-    explicit ProgressBar(LinesLoader * ll, wxWindow* parent): wxProgressDialog(wxT("Wait..."), wxT("Keep waiting..."), 100,parent,wxPD_ELAPSED_TIME|wxPD_ESTIMATED_TIME |wxPD_REMAINING_TIME| wxPD_APP_MODAL) ,linesLoader(ll){
+    explicit ProgressBar(ResourceLoader * ll, wxWindow* parent): wxProgressDialog(wxT("Wait..."), wxT("Keep waiting..."), 100, parent, wxPD_ELAPSED_TIME | wxPD_ESTIMATED_TIME | wxPD_REMAINING_TIME | wxPD_APP_MODAL) , linesLoader(ll){
         linesLoader->subscribe(this);
 
     }
@@ -30,7 +30,7 @@ public:
         this->Update(linesLoader->getProgress());
     }
 private:
-    LinesLoader * linesLoader;
+    ResourceLoader * linesLoader;
 };
 
 

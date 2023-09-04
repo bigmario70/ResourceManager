@@ -7,7 +7,7 @@
 #include <wx/wx.h>
 #endif
 
-#include "LinesLoader.h"
+#include "ResourceLoader.h"
 #include "ProgressBar.h"
 
 class MyApp: public wxApp
@@ -25,48 +25,52 @@ public:
     MyFrame();
 
 private:
-    void OnHello(wxCommandEvent& event);
-    void OnStart(wxCommandEvent& event);
+    void OnLoadFromFile(wxCommandEvent& event);
+    void OnSaveToFile(wxCommandEvent& event);
+    void OnDeleteItem(wxCommandEvent& event);
+    void OnInsertItem(wxCommandEvent& event);
     void OnExit(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
-    LinesLoader myLoader;
+    wxListBox* resourceList;
+    wxTextCtrl* newResource;
 };
 
 enum
 {
-    ID_Hello = 1,ID_Start=2
+    ID_LoadFromFile = 1,
+    ID_SaveToFile=2,
+    ID_ListBox=3,
+    ID_DeleteItem=4,
+    ID_InsertItem=5,
+    ID_NewItem=6
 };
 
 
 bool MyApp::OnInit() {
-
-
     MyFrame *frame = new MyFrame();
     frame->Show(true);
-
     return true;
 }
 
 MyFrame::MyFrame()
-        : wxFrame(nullptr, wxID_ANY, "Lines Loader"),myLoader(LinesLoader("../prova.txt"))
+        : wxFrame(nullptr, wxID_ANY, "Lines Loader")
 {
 
-    wxMenu *menuFile = new wxMenu;
-    menuFile->Append(ID_Hello, "&Hello...\tCtrl-H",
-                     "Help string shown in status bar for this menu item");
+    auto *menuFile = new wxMenu;
+    menuFile->Append(ID_LoadFromFile, "&Load from file...\tCtrl-L",
+                     "Load data from file");
+    menuFile->AppendSeparator();
+    menuFile->Append(ID_SaveToFile, "&Save to file...\tCtrl-S",
+                     "Save data to file");
     menuFile->AppendSeparator();
     menuFile->Append(wxID_EXIT);
 
-    wxMenu *menuHelp = new wxMenu;
+    auto *menuHelp = new wxMenu;
     menuHelp->Append(wxID_ABOUT);
 
-    wxMenu *menuAction = new wxMenu;
-    menuAction ->Append(ID_Start, "&Start Loading...\tCtrl-S",
-                    "Start Loading");
 
-    wxMenuBar *menuBar = new wxMenuBar;
+    auto *menuBar = new wxMenuBar;
     menuBar->Append(menuFile, "&File");
-    menuBar->Append(menuAction, "&Action");
     menuBar->Append(menuHelp, "&Help");
 
     SetMenuBar( menuBar );
@@ -74,10 +78,21 @@ MyFrame::MyFrame()
     CreateStatusBar();
     SetStatusText("Welcome to wxWidgets!");
 
-    Bind(wxEVT_MENU, &MyFrame::OnHello, this, ID_Hello);
-    Bind(wxEVT_MENU, &MyFrame::OnStart, this, ID_Start);
+    wxArrayString initialResources;
+    initialResources.Add(wxT("lista vuota"));
+    resourceList = new wxListBox(this,ID_ListBox,wxDefaultPosition,wxSize(200,400),initialResources,wxLB_SINGLE);
+    wxButton* deleteButton=new wxButton(this,ID_DeleteItem,wxT("DELETE"),wxPoint(250,100),wxDefaultSize);
+    wxButton* insertButton=new wxButton(this,ID_InsertItem,wxT("INSERT"),wxPoint(250,150),wxDefaultSize);
+    newResource=new wxTextCtrl(this,ID_NewItem,wxEmptyString,wxPoint(400,150),wxDefaultSize);
+
+    Bind(wxEVT_MENU, &MyFrame::OnLoadFromFile, this, ID_LoadFromFile);
+    Bind(wxEVT_MENU, &MyFrame::OnSaveToFile, this, ID_SaveToFile);
     Bind(wxEVT_MENU, &MyFrame::OnAbout, this, wxID_ABOUT);
     Bind(wxEVT_MENU, &MyFrame::OnExit, this, wxID_EXIT);
+    Bind(wxEVT_BUTTON, &MyFrame::OnDeleteItem, this, ID_DeleteItem);
+    Bind(wxEVT_BUTTON, &MyFrame::OnInsertItem, this, ID_InsertItem);
+
+
 }
 
 void MyFrame::OnExit(wxCommandEvent& event)
@@ -88,21 +103,41 @@ void MyFrame::OnExit(wxCommandEvent& event)
 
 void MyFrame::OnAbout(wxCommandEvent& event)
 {
-    wxMessageBox("This is a wxWidgets Hello World example",
-                 "About Hello World", wxOK | wxICON_INFORMATION);
+    wxMessageBox("Applicazione di Laboratorio che carica risorse da un file","About Resource Loader"
+                 , wxOK | wxICON_INFORMATION);
 }
 
-void MyFrame::OnHello(wxCommandEvent& event)
-{
-    wxLogMessage("Hello world from wxWidgets!");
-}
 
-void MyFrame::OnStart(wxCommandEvent& event)
+void MyFrame::OnLoadFromFile(wxCommandEvent& event)
 {
+    resourceList->Clear();
+    ResourceLoader myLoader("../prova.txt");
     ProgressBar myPB(&myLoader,this);
     myLoader.loadLines();
-    auto lines =myLoader.getLines();
-    wxTextCtrl* textCtrl= new wxTextCtrl(this,10,wxEmptyString,wxDefaultPosition,wxSize(240,100),wxTE_MULTILINE);
-    for (auto line: lines)
-        textCtrl->AppendText(line+"\n");
+    auto resources =myLoader.getLines();
+    wxArrayString loadedResources;
+    for (const auto& resource: resources){
+        wxString lineacaricata(resource);
+        loadedResources.Add(lineacaricata);
+    }
+
+    //resourceList->Clear();
+    resourceList->Set(loadedResources);
+}
+
+void MyFrame::OnSaveToFile(wxCommandEvent &event) {
+
+}
+
+void MyFrame::OnDeleteItem(wxCommandEvent &event) {
+
+    resourceList->Delete(resourceList->GetSelection());
+
+}
+
+void MyFrame::OnInsertItem(wxCommandEvent &event) {
+
+
+    resourceList->Insert(newResource->GetValue(), resourceList->GetSelection());
+
 }
