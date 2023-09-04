@@ -13,7 +13,7 @@
 
 class ResourceLoader : public Subject {
 public:
-    ResourceLoader(const std::string& fn): filename(fn){}
+    ResourceLoader(const std::string& fn): filename(fn),progress(0),fault(false){}
     virtual ~ResourceLoader () {}
     void notify() override;
     void subscribe(Observer *o) override;
@@ -21,10 +21,13 @@ public:
     int getProgress() const;
 
     const std::vector<std::string>& getLines() const;
+    const std::string &getFilename() const;
+    bool isFault() const;
     void loadLines();
 
 private:
     int progress;
+    bool fault;
     std::string filename;
     std::vector<std::string> lines;
     std::list<Observer *> observers;

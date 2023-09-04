@@ -31,7 +31,7 @@ private:
     void OnInsertItem(wxCommandEvent& event);
     void OnExit(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
-    wxListBox* resourceList;
+    wxListBox* resListBox;
     wxTextCtrl* newResource;
 };
 
@@ -53,8 +53,9 @@ bool MyApp::OnInit() {
 }
 
 MyFrame::MyFrame()
-        : wxFrame(nullptr, wxID_ANY, "Lines Loader")
+        : wxFrame(nullptr, wxID_ANY, "Resource Loader",wxDefaultPosition,wxSize(500,600),wxDEFAULT_FRAME_STYLE,"ResourceLoader")
 {
+    //Composizione della Barra dei Menù
 
     auto *menuFile = new wxMenu;
     menuFile->Append(ID_LoadFromFile, "&Load from file...\tCtrl-L",
@@ -68,22 +69,23 @@ MyFrame::MyFrame()
     auto *menuHelp = new wxMenu;
     menuHelp->Append(wxID_ABOUT);
 
-
     auto *menuBar = new wxMenuBar;
     menuBar->Append(menuFile, "&File");
     menuBar->Append(menuHelp, "&Help");
 
     SetMenuBar( menuBar );
 
+    //Impostazione StatusBar
     CreateStatusBar();
     SetStatusText("Welcome to wxWidgets!");
 
     wxArrayString initialResources;
     initialResources.Add(wxT("lista vuota"));
-    resourceList = new wxListBox(this,ID_ListBox,wxDefaultPosition,wxSize(200,400),initialResources,wxLB_SINGLE);
+
+    resListBox = new wxListBox(this, ID_ListBox, wxDefaultPosition, wxSize(200, 400), initialResources, wxLB_SINGLE);
     wxButton* deleteButton=new wxButton(this,ID_DeleteItem,wxT("DELETE"),wxPoint(250,100),wxDefaultSize);
     wxButton* insertButton=new wxButton(this,ID_InsertItem,wxT("INSERT"),wxPoint(250,150),wxDefaultSize);
-    newResource=new wxTextCtrl(this,ID_NewItem,wxEmptyString,wxPoint(400,150),wxDefaultSize);
+    newResource = new wxTextCtrl(this,ID_NewItem,wxEmptyString,wxPoint(400,150),wxDefaultSize);
 
     Bind(wxEVT_MENU, &MyFrame::OnLoadFromFile, this, ID_LoadFromFile);
     Bind(wxEVT_MENU, &MyFrame::OnSaveToFile, this, ID_SaveToFile);
@@ -97,7 +99,6 @@ MyFrame::MyFrame()
 
 void MyFrame::OnExit(wxCommandEvent& event)
 {
-
     Close(true);
 }
 
@@ -110,10 +111,16 @@ void MyFrame::OnAbout(wxCommandEvent& event)
 
 void MyFrame::OnLoadFromFile(wxCommandEvent& event)
 {
-    resourceList->Clear();
+
     ResourceLoader myLoader("../prova.txt");
     ProgressBar myPB(&myLoader,this);
-    myLoader.loadLines();
+    try {
+        myLoader.loadLines();
+    }
+    catch(const std::exception& e){
+        return;
+    }
+    resListBox->Clear();
     auto resources =myLoader.getLines();
     wxArrayString loadedResources;
     for (const auto& resource: resources){
@@ -121,8 +128,8 @@ void MyFrame::OnLoadFromFile(wxCommandEvent& event)
         loadedResources.Add(lineacaricata);
     }
 
-    //resourceList->Clear();
-    resourceList->Set(loadedResources);
+    //resListBox->Clear();
+    resListBox->Set(loadedResources);
 }
 
 void MyFrame::OnSaveToFile(wxCommandEvent &event) {
@@ -131,13 +138,12 @@ void MyFrame::OnSaveToFile(wxCommandEvent &event) {
 
 void MyFrame::OnDeleteItem(wxCommandEvent &event) {
 
-    resourceList->Delete(resourceList->GetSelection());
+    resListBox->Delete(resListBox->GetSelection());
 
 }
 
 void MyFrame::OnInsertItem(wxCommandEvent &event) {
 
-
-    resourceList->Insert(newResource->GetValue(), resourceList->GetSelection());
+    resListBox->Insert(newResource->GetValue(), resListBox->GetSelection());
 
 }

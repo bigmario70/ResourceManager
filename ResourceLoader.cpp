@@ -6,7 +6,7 @@
 #include "ResourceLoader.h"
 #include <fstream>
 #include <string>
-#include <limits>
+#include <stdexcept>
 
 
 void ResourceLoader::notify() {
@@ -23,34 +23,43 @@ void ResourceLoader::unsubscribe(Observer* o) {
 }
 
 void ResourceLoader::loadLines(){
-    // constexpr auto max_size = std::numeric_limits<std::streamsize>::max();
-    std::ifstream infile;
-    infile.open(filename, std::ifstream::in);
-    if (infile.is_open()){
-        infile.seekg (0, infile.end);
-        int length = infile.tellg();
-        infile.seekg (0, infile.beg);
-        char line[100];
-        progress =0;
-        while (!infile.eof()){
-            infile.getline(line,100);
-            lines.push_back(std::string(line));
-            //char dummyLine[101];
-            if (infile.fail()&&!infile.bad()) {
-                infile.clear();
-                //infile.ignore(max_size, '\n');
-                //infile.getline( dummyLine, 100);
-            }
+    const int maxChar = 100;
+    std::ifstream resourcesFile;
+    try{
+        resourcesFile.open(filename, std::ifstream::in);
+    }
+    catch(const std::exception& e){
+            fault=true;
+            throw std::runtime_error(std::string("Failed to open file: ") + filename);
+    }
+    try{
+        if (resourcesFile.is_open()){
+            //Leggo la lunghezza del file
+            resourcesFile.seekg (0, std::ifstream::end);
+            long int length = resourcesFile.tellg();
 
-            progress=static_cast<int> (infile.tellg()*100/length);
-            if (progress==0 ){
-                progress=100;
-                infile.close();
+            resourcesFile.seekg (0, std::ifstream::beg);
+            char line[maxChar];
+            progress=0;
+            while (!resourcesFile.eof()){
+                resourcesFile.getline(line, maxChar);
+                lines.emplace_back(line);
+                progress = static_cast<int> (resourcesFile.tellg() * 100 / length);
+                notify();
             }
+            progress=100;
+            resourcesFile.close();
             notify();
+        }else{
+            throw std::runtime_error(std::string("Failed to load from file: ") + filename);
         }
-    }else{
-        std::cout << "failed to open " << filename << '\n';
+    }
+    catch(const std::exception& e){
+        fault=true;
+        notify();
+        progress=0;
+        lines.clear();
+        throw std::runtime_error(std::string("Failed to load from file: ") + filename);
     }
 }
 
@@ -60,4 +69,12 @@ int ResourceLoader::getProgress() const{
 
 const std::vector<std::string>& ResourceLoader::getLines() const{
     return lines;
+}
+
+bool ResourceLoader::isFault() const {
+    return fault;
+}
+
+const std::string &ResourceLoader::getFilename() const {
+    return filename;
 }

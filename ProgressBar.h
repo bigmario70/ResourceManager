@@ -18,7 +18,7 @@
 class ProgressBar : public Observer, public wxProgressDialog{
 public:
 
-    explicit ProgressBar(ResourceLoader * ll, wxWindow* parent): wxProgressDialog(wxT("Wait..."), wxT("Keep waiting..."), 100, parent, wxPD_ELAPSED_TIME | wxPD_ESTIMATED_TIME | wxPD_REMAINING_TIME | wxPD_APP_MODAL) , linesLoader(ll){
+    explicit ProgressBar(ResourceLoader * ll, wxWindow* parent): wxProgressDialog(wxT("Loading resources"), wxT("Loading resources from file:"+ll->getFilename()), 100, parent, wxPD_ELAPSED_TIME | wxPD_ESTIMATED_TIME | wxPD_REMAINING_TIME | wxPD_APP_MODAL) , linesLoader(ll){
         linesLoader->subscribe(this);
 
     }
@@ -28,6 +28,8 @@ public:
     void update() override{
         wxMilliSleep(250);
         this->Update(linesLoader->getProgress());
+        if(linesLoader->isFault())
+            wxMessageBox(wxT("Failed To Load"),wxT("Failed To Load"),wxOK|wxCENTRE,this);
     }
 private:
     ResourceLoader * linesLoader;
