@@ -7,6 +7,7 @@
 #include <fstream>
 #include <string>
 #include <stdexcept>
+#include "MyExceptions.h"
 
 
 void ResourceLoader::notify() {
@@ -24,42 +25,43 @@ void ResourceLoader::unsubscribe(Observer* o) {
 
 void ResourceLoader::loadLines(){
     const int maxChar = 100;
+    fault=false;
     std::ifstream resourcesFile;
     try{
-        resourcesFile.open(filename, std::ifstream::in);
+        resourcesFile.open(fileName, std::ifstream::in);
     }
     catch(const std::exception& e){
             fault=true;
-            throw std::runtime_error(std::string("Failed to open file: ") + filename);
+            throw FailedToOpenFile(fileName);
+    }
+    if (!resourcesFile.is_open()){
+        fault=true;
+        throw FailedToOpenFile(fileName);;
     }
     try{
-        if (resourcesFile.is_open()){
-            //Leggo la lunghezza del file
-            resourcesFile.seekg (0, std::ifstream::end);
-            long int length = resourcesFile.tellg();
+        //Leggo la lunghezza del file
+        resourcesFile.seekg (0, std::ifstream::end);
+        long int length = resourcesFile.tellg();
 
-            resourcesFile.seekg (0, std::ifstream::beg);
-            char line[maxChar];
-            progress=0;
-            while (!resourcesFile.eof()){
-                resourcesFile.getline(line, maxChar);
-                lines.emplace_back(line);
-                progress = static_cast<int> (resourcesFile.tellg() * 100 / length);
-                notify();
-            }
-            progress=100;
-            resourcesFile.close();
+        resourcesFile.seekg (0, std::ifstream::beg);
+        char line[maxChar];
+        progress=0;
+        while (!resourcesFile.eof()){
+            resourcesFile.getline(line, maxChar);
+            lines.emplace_back(line);
+            progress = static_cast<int> (resourcesFile.tellg() * 100 / length);
             notify();
-        }else{
-            throw std::runtime_error(std::string("Failed to load from file: ") + filename);
         }
+        progress=100;
+        resourcesFile.close();
+        notify();
     }
     catch(const std::exception& e){
         fault=true;
         notify();
         progress=0;
         lines.clear();
-        throw std::runtime_error(std::string("Failed to load from file: ") + filename);
+        throw FailedToLoadResources(fileName);
     }
 }
 
@@ -76,5 +78,5 @@ bool ResourceLoader::isFault() const {
 }
 
 const std::string &ResourceLoader::getFilename() const {
-    return filename;
+    return fileName;
 }
