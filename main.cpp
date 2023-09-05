@@ -1,21 +1,25 @@
-#include <iostream>
-
-// For compilers that support pre-compilation, includes "wx/wx.h".
+//  Resource Loader application with Observer Design Pattern
+//  Written by Mario Cei
+//  09/2023
 
 #ifndef WX_PRECOMP
 #include <wx/wxprec.h>
 #include <wx/wx.h>
 #endif
 
+//Model and controller Classes
 #include "ResourceLoader.h"
 #include "ProgressBar.h"
+#include "MyExceptions.h"
 
+// Declaration of the Application Class
 class MyApp: public wxApp
 {
 public:
-    virtual bool OnInit();
+    bool OnInit() override;
 };
 
+// Tells wxWidgets which is the application class to instantiate
 wxIMPLEMENT_APP(MyApp);
 
 
@@ -23,7 +27,6 @@ class MyFrame : public wxFrame
 {
 public:
     MyFrame();
-
 private:
     void OnLoadFromFile(wxCommandEvent& event);
     void OnSaveToFile(wxCommandEvent& event);
@@ -38,7 +41,6 @@ private:
 enum
 {
     ID_LoadFromFile = 1,
-    ID_SaveToFile=2,
     ID_ListBox=3,
     ID_DeleteItem=4,
     ID_InsertItem=5,
@@ -61,7 +63,7 @@ MyFrame::MyFrame()
     menuFile->Append(ID_LoadFromFile, "&Load from file...\tCtrl-L",
                      "Load data from file");
     menuFile->AppendSeparator();
-    menuFile->Append(ID_SaveToFile, "&Save to file...\tCtrl-S",
+    menuFile->Append(wxID_SAVE, "&Save to file...\tCtrl-S",
                      "Save data to file");
     menuFile->AppendSeparator();
     menuFile->Append(wxID_EXIT);
@@ -83,18 +85,16 @@ MyFrame::MyFrame()
     initialResources.Add(wxT("lista vuota"));
 
     resListBox = new wxListBox(this, ID_ListBox, wxDefaultPosition, wxSize(200, 400), initialResources, wxLB_SINGLE);
-    wxButton* deleteButton=new wxButton(this,ID_DeleteItem,wxT("DELETE"),wxPoint(250,100),wxDefaultSize);
-    wxButton* insertButton=new wxButton(this,ID_InsertItem,wxT("INSERT"),wxPoint(250,150),wxDefaultSize);
+    auto deleteButton=new wxButton(this, ID_DeleteItem, wxT("DELETE"), wxPoint(250, 100), wxDefaultSize);
+    auto insertButton=new wxButton(this, ID_InsertItem, wxT("INSERT"), wxPoint(250, 150), wxDefaultSize);
     newResource = new wxTextCtrl(this,ID_NewItem,wxEmptyString,wxPoint(400,150),wxDefaultSize);
 
     Bind(wxEVT_MENU, &MyFrame::OnLoadFromFile, this, ID_LoadFromFile);
-    Bind(wxEVT_MENU, &MyFrame::OnSaveToFile, this, ID_SaveToFile);
+    Bind(wxEVT_MENU, &MyFrame::OnSaveToFile, this, wxID_SAVE);
     Bind(wxEVT_MENU, &MyFrame::OnAbout, this, wxID_ABOUT);
     Bind(wxEVT_MENU, &MyFrame::OnExit, this, wxID_EXIT);
     Bind(wxEVT_BUTTON, &MyFrame::OnDeleteItem, this, ID_DeleteItem);
     Bind(wxEVT_BUTTON, &MyFrame::OnInsertItem, this, ID_InsertItem);
-
-
 }
 
 void MyFrame::OnExit(wxCommandEvent& event)
@@ -108,16 +108,16 @@ void MyFrame::OnAbout(wxCommandEvent& event)
                  , wxOK | wxICON_INFORMATION);
 }
 
-
 void MyFrame::OnLoadFromFile(wxCommandEvent& event)
 {
-
-    ResourceLoader myLoader("../prova.txt");
+    ResourceLoader myLoader("../prova2.txt");
     ProgressBar myPB(&myLoader,this);
     try {
         myLoader.loadLines();
     }
-    catch(const std::exception& e){
+    catch(const FailedToOpenFile& e){
+
+        wxMessageBox(wxT("Failed To Open File"+myLoader.getFilename()),wxT("Error"),wxOK|wxCENTRE,this);
         return;
     }
     resListBox->Clear();

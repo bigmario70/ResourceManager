@@ -25,6 +25,7 @@ public:
     virtual ~ProgressBar(){
         linesLoader->unsubscribe(this);
     }
+
     void update() override{
         wxMilliSleep(250);
         this->Update(linesLoader->getProgress());
