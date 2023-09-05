@@ -18,12 +18,13 @@ public:
     void notify() override;
     void subscribe(Observer *o) override;
     void unsubscribe(Observer *o) override;
-    int getProgress() const;
 
+    void loadLines();
+
+    int getProgress() const;
     const std::vector<std::string>& getLines() const;
     const std::string &getFilename() const;
     bool isFault() const;
-    void loadLines();
 
 private:
     int progress;
