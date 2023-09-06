@@ -55,7 +55,7 @@ bool MyApp::OnInit() {
 }
 
 MyFrame::MyFrame()
-        : wxFrame(nullptr, wxID_ANY, "Resource Loader",wxDefaultPosition,wxSize(500,600),wxDEFAULT_FRAME_STYLE,"ResourceLoader")
+        : wxFrame(nullptr, wxID_ANY, "Resource Manager",wxDefaultPosition,wxSize(500,600),wxDEFAULT_FRAME_STYLE,"ResourceManager")
 {
     //Composizione della Barra dei Menù
 
@@ -84,7 +84,8 @@ MyFrame::MyFrame()
     wxArrayString initialResources;
     initialResources.Add(wxT("lista vuota"));
 
-    resListBox = new wxListBox(this, ID_ListBox, wxDefaultPosition, wxSize(200, 400), initialResources, wxLB_SINGLE);
+    auto resListBoxLabel = new wxStaticText(this, wxID_ANY,"Resource list", wxPoint(10,30),wxSize(200,30),wxALIGN_CENTRE_HORIZONTAL);
+    resListBox = new wxListBox(this, ID_ListBox, wxPoint(10,60), wxSize(200, 400), initialResources, wxLB_SINGLE);
     auto deleteButton=new wxButton(this, ID_DeleteItem, wxT("DELETE"), wxPoint(250, 100), wxDefaultSize);
     auto insertButton=new wxButton(this, ID_InsertItem, wxT("INSERT"), wxPoint(250, 150), wxDefaultSize);
     newResource = new wxTextCtrl(this,ID_NewItem,wxEmptyString,wxPoint(400,150),wxDefaultSize);
@@ -110,10 +111,18 @@ void MyFrame::OnAbout(wxCommandEvent& event)
 
 void MyFrame::OnLoadFromFile(wxCommandEvent& event)
 {
-    ResourceLoader myLoader("../prova2.txt");
+    wxString defaultDir = wxT("~/CLionProjects/ResourceLoader");
+    wxString defaultFileName = wxT("prova.txt");
+    wxFileDialog fileDialog(this,"File Selection",defaultDir, defaultFileName,wxFileSelectorDefaultWildcardStr, wxFD_OPEN);
+    if(fileDialog.ShowModal() != wxID_OK)
+        return;
+    wxString fileName=fileDialog.GetFilename();
+    wxString dirName=fileDialog.GetDirectory();
+
+    ResourceLoader myLoader;
     ProgressBar myPB(&myLoader,this);
     try {
-        myLoader.loadLines();
+        myLoader.loadLines(dirName.ToStdString()+"/"+fileName.ToStdString());
     }
     catch(const FailedToOpenFile& e){
         wxMessageBox(wxT("Failed To Open File"+myLoader.getFilename()),wxT("Error"),wxOK|wxCENTRE,this);
@@ -123,15 +132,47 @@ void MyFrame::OnLoadFromFile(wxCommandEvent& event)
     auto resources =myLoader.getLines();
     wxArrayString loadedResources;
     for (const auto& resource: resources){
-        wxString lineacaricata(resource);
-        loadedResources.Add(lineacaricata);
+        wxString loadedLine(resource);
+        loadedResources.Add(loadedLine);
     }
-
-    //resListBox->Clear();
     resListBox->Set(loadedResources);
 }
 
 void MyFrame::OnSaveToFile(wxCommandEvent &event) {
+
+    wxString defaultDir = wxT("~/CLionProjects/ResourceLoader");
+    wxString defaultFileName = wxT("prova.txt");
+    wxFileDialog fileDialog(this,"File Selection",defaultDir, defaultFileName,wxFileSelectorDefaultWildcardStr, wxFD_SAVE);
+    if(fileDialog.ShowModal() != wxID_OK)
+        return;
+    wxString fileName=fileDialog.GetFilename();
+    wxString dirName=fileDialog.GetDirectory();
+
+
+    ResourceLoader myLoader2;
+    ProgressBar myPB2(&myLoader2,this);
+    int items_count=10;
+    resListBox->GetCount();
+    int i = 0;
+    std::vector<std::string>  list;
+
+    do
+    {
+        list.emplace_back(resListBox->GetString(i++));
+    }
+    while(i < items_count);
+
+    myLoader2.setLines(list);
+
+    try {
+        myLoader2.saveLines(dirName.ToStdString()+"/"+fileName.ToStdString());
+    }
+    catch(const FailedToOpenFile& e){
+        wxMessageBox(wxT("Failed To Open File"+myLoader2.getFilename()),wxT("Error"),wxOK|wxCENTRE,this);
+        return;
+    }
+
+
 
 }
 

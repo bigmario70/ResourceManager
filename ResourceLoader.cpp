@@ -23,7 +23,28 @@ void ResourceLoader::unsubscribe(Observer* o) {
     observers.remove(o);
 }
 
-void ResourceLoader::loadLines(){
+int ResourceLoader::getProgress() const{
+    return progress;
+}
+
+const std::vector<std::string>& ResourceLoader::getLines() const{
+    return lines;
+}
+
+void ResourceLoader::setLines(const std::vector<std::string> & l){
+    lines = l;
+}
+
+bool ResourceLoader::isFault() const {
+    return fault;
+}
+
+const std::string & ResourceLoader::getFilename() const {
+    return fileName;
+}
+
+void ResourceLoader::loadLines(const std::string& fn){
+    fileName=fn;
     const int maxChar = 100;
     fault=false;
     std::ifstream resourcesFile;
@@ -46,10 +67,14 @@ void ResourceLoader::loadLines(){
         resourcesFile.seekg (0, std::ifstream::beg);
         char line[maxChar];
         progress=0;
+
         while (!resourcesFile.eof()){
             resourcesFile.getline(line, maxChar);
             lines.emplace_back(line);
-            progress = static_cast<int> (resourcesFile.tellg() * 100 / length);
+            if(resourcesFile.tellg() ==-1)
+                progress=100;
+            else
+                progress = static_cast<int> (resourcesFile.tellg() * 100 / length);
             notify();
         }
         progress=100;
@@ -64,19 +89,47 @@ void ResourceLoader::loadLines(){
         throw FailedToLoadResources(fileName);
     }
 }
+void ResourceLoader::saveLines(const std::string& fn){
+    fileName=fn;
+    const int maxChar = 100;
+    fault=false;
+    std::ofstream resourcesFile;
+    try{
+        resourcesFile.open(fileName, std::ifstream::out);
+    }
+    catch(const std::exception& e){
+        fault=true;
+        throw FailedToOpenFile(fileName);
+    }
+    if (!resourcesFile.is_open()){
+        fault=true;
+        throw FailedToOpenFile(fileName);;
+    }
+    try{
+        //Leggo la lunghezza della lista
 
-int ResourceLoader::getProgress() const{
-    return progress;
+        long int length = lines.size();
+
+        progress=0;
+        int i=0;
+        for (auto line :lines) {
+            resourcesFile<<line<<std::endl;
+            i++;
+            progress = static_cast<int> ( i * 100 / length);
+
+            notify();
+        }
+        progress=100;
+        resourcesFile.close();
+        notify();
+    }
+    catch(const std::exception& e){
+        fault=true;
+        notify();
+        progress=0;
+        throw FailedToLoadResources(fileName);
+    }
 }
 
-const std::vector<std::string>& ResourceLoader::getLines() const{
-    return lines;
-}
 
-bool ResourceLoader::isFault() const {
-    return fault;
-}
 
-const std::string &ResourceLoader::getFilename() const {
-    return fileName;
-}
