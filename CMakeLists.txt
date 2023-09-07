@@ -6,7 +6,11 @@ set(CMAKE_CXX_STANDARD 14)
 find_package(wxWidgets REQUIRED net gl core base)
 include(${wxWidgets_USE_FILE})
 
-set(SOURCE_FILES_RL Observer.h Subject.h ResourceLoader.cpp ResourceLoader.h ProgressBar.cpp ProgressBar.h MyExceptions.h)
+set(SOURCE_FILES_RL Observer.h Subject.h ResourceLoader.cpp ResourceLoader.h ProgressBar.cpp ProgressBar.h MyExceptions.h
+        Model.cpp
+        Model.h
+        Controller.cpp
+        Controller.h)
 
 add_library(${PROJECT_NAME}Library ${SOURCE_FILES_RL})
 add_executable(${PROJECT_NAME} ResourceManager.cpp)

@@ -27,12 +27,8 @@ int ResourceLoader::getProgress() const{
     return progress;
 }
 
-const std::vector<std::string>& ResourceLoader::getLines() const{
+std::list<std::string> ResourceLoader::getLines() const{
     return lines;
-}
-
-void ResourceLoader::setLines(const std::vector<std::string> & l){
-    lines = l;
 }
 
 bool ResourceLoader::isFault() const {
@@ -40,24 +36,24 @@ bool ResourceLoader::isFault() const {
 }
 
 const std::string & ResourceLoader::getFilename() const {
-    return fileName;
+    return completeFileName;
 }
 
-void ResourceLoader::loadLines(const std::string& fn){
-    fileName=fn;
+void ResourceLoader::loadResources(){
+
     const int maxChar = 100;
     fault=false;
     std::ifstream resourcesFile;
     try{
-        resourcesFile.open(fileName, std::ifstream::in);
+        resourcesFile.open(completeFileName, std::ifstream::in);
     }
     catch(const std::exception& e){
             fault=true;
-            throw FailedToOpenFile(fileName);
+            throw FailedToOpenFile(completeFileName);
     }
     if (!resourcesFile.is_open()){
         fault=true;
-        throw FailedToOpenFile(fileName);;
+        throw FailedToOpenFile(completeFileName);;
     }
     try{
         //Leggo la lunghezza del file
@@ -78,32 +74,34 @@ void ResourceLoader::loadLines(const std::string& fn){
             notify();
         }
         progress=100;
-        resourcesFile.close();
         notify();
+        resourcesFile.close();
+
     }
     catch(const std::exception& e){
         fault=true;
         notify();
         progress=0;
         lines.clear();
-        throw FailedToLoadResources(fileName);
+        throw FailedToLoadResources(completeFileName);
     }
 }
+/*
 void ResourceLoader::saveLines(const std::string& fn){
-    fileName=fn;
+    completeFileName=fn;
     const int maxChar = 100;
     fault=false;
     std::ofstream resourcesFile;
     try{
-        resourcesFile.open(fileName, std::ifstream::out);
+        resourcesFile.open(completeFileName, std::ifstream::out);
     }
     catch(const std::exception& e){
         fault=true;
-        throw FailedToOpenFile(fileName);
+        throw FailedToOpenFile(completeFileName);
     }
     if (!resourcesFile.is_open()){
         fault=true;
-        throw FailedToOpenFile(fileName);;
+        throw FailedToOpenFile(completeFileName);;
     }
     try{
         //Leggo la lunghezza della lista
@@ -127,9 +125,7 @@ void ResourceLoader::saveLines(const std::string& fn){
         fault=true;
         notify();
         progress=0;
-        throw FailedToLoadResources(fileName);
+        throw FailedToLoadResources(completeFileName);
     }
 }
-
-
-
+*/
