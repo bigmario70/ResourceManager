@@ -1,27 +1,30 @@
 #include "gtest/gtest.h"
 
-#include "../Inventario.h"
+#include "../ResourceLoader.h"
 
 
-class InventarioSuite : public ::testing::Test {
+class ResourceLoaderSuite : public ::testing::Test {
 
 protected:
-    InventarioSuite():MyInv(),MyInvEmpty(),MyInvMax2(2){}
+    ResourceLoaderSuite(): MyLoader1("NonExistentFile.txt"),MyLoader2("/home/mario/CLionProjects/ResourceLoader/FileVuoto.txt"){}
 
     virtual void SetUp() {
-        MyInv.addElement(new Robot("Pippo", true));
-        MyInv.addElement(new Equipment("Scudo", false));
-        MyInv.addElement(new Weapon("Arco", 10));
+        MyLoader1.loadResources();
+        MyLoader2.loadResources();
     }
 
-    Inventario MyInv;
-    Inventario MyInvEmpty;
-    Inventario MyInvMax2;
+
+    ResourceLoader MyLoader1;
+    ResourceLoader MyLoader2;
 };
 
 
-TEST_F(InventarioSuite , DefaultConstructor) {
-    ASSERT_EQ(-1, MyInvEmpty.getMax());
-    ASSERT_EQ(0, MyInvEmpty.getElementsSize());
+TEST_F(ResourceLoaderSuite , LoadFromNonExistentFile) {
+    ASSERT_EQ(true, MyLoader1.isFault());
+    ASSERT_EQ(0, MyLoader1.getProgress());
 }
 
+TEST_F(ResourceLoaderSuite , LoadFromEmptyFile) {
+    ASSERT_EQ(false, MyLoader2.isFault());
+    ASSERT_EQ(100, MyLoader2.getProgress());
+}

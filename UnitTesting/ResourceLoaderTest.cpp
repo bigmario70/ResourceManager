@@ -1,21 +1,17 @@
 #include "gtest/gtest.h"
 
-#include "../Inventario.h"
+#include "../ResourceLoader.h"
 
-TEST(Inventario, DefaultConstructor) {
-    Inventario MyInv;
-    ASSERT_EQ(-1, MyInv.getMax());
-    ASSERT_EQ(0, MyInv.getElementsSize());
+TEST(ResourceLoader, LoadFromNonExistentFile) {
+    ResourceLoader MyLoader("NonExistentFile.txt");
+    MyLoader.loadResources();
+    ASSERT_EQ(true, MyLoader.isFault());
+    ASSERT_EQ(0, MyLoader.getProgress());
 }
 
-TEST(Inventario, ConstructorWithSize2) {
-    Inventario MyInv(2);
-    ASSERT_EQ(2, MyInv.getMax());
-    ASSERT_EQ(0, MyInv.getElementsSize());
-}
-
-TEST(Inventario, AddElement) {
-    Inventario MyInv(2);
-    ASSERT_EQ(2, MyInv.getMax());
-    ASSERT_EQ(0, MyInv.getElementsSize());
+TEST(ResourceLoader, LoadFromEmptyFile) {
+    ResourceLoader MyLoader("/home/mario/CLionProjects/ResourceLoader/FileVuoto.txt");
+    MyLoader.loadResources();
+    ASSERT_EQ(false, MyLoader.isFault());
+    ASSERT_EQ(100, MyLoader.getProgress());
 }
