@@ -119,6 +119,8 @@ void MyFrame::update(){
     }
     resListBox->Clear();
     resListBox->Set(loadedResources);
+    if(resListBox->GetCount()>0)
+        resListBox->SetSelection(0);
 }
 
 void MyFrame::OnExit(wxCommandEvent& event)
@@ -141,13 +143,10 @@ void MyFrame::OnLoadFromFile(wxCommandEvent& event)
         return;
     wxString fileName=fileDialog.GetFilename();
     wxString dirName=fileDialog.GetDirectory();
-    try {
-        controller->loadFromFile(dirName.ToStdString()+"/"+fileName.ToStdString());
-    }
-    catch(const FailedToOpenFile& e){
-        wxMessageBox(wxT("Failed To Open File"+dirName.ToStdString()+"/"+fileName.ToStdString()),wxT("Error"),wxOK|wxCENTRE,this);
-        return;
-    }
+    std::string compFName=dirName.ToStdString()+"/"+fileName.ToStdString();
+    int exitCode = controller->loadFromFile(compFName);
+    if (exitCode !=0 )
+        wxMessageBox(wxT("Failed To Open File: "+compFName),wxT("Error"),wxOK|wxCENTRE,this);
 }
 
 void MyFrame::OnSaveToFile(wxCommandEvent &event) {
@@ -159,19 +158,20 @@ void MyFrame::OnSaveToFile(wxCommandEvent &event) {
         return;
     wxString fileName=fileDialog.GetFilename();
     wxString dirName=fileDialog.GetDirectory();
-    controller->saveToFile(dirName.ToStdString()+"/"+fileName.ToStdString());
+    std::string compFName=dirName.ToStdString()+"/"+fileName.ToStdString();
+    int exitCode = controller->saveToFile(compFName);
+    if (exitCode !=0 )
+        wxMessageBox(wxT("Failed To Save To File: "+compFName),wxT("Error"),wxOK|wxCENTRE,this);
 }
 
 void MyFrame::OnDeleteItem(wxCommandEvent &event) {
-
-    resListBox->Delete(resListBox->GetSelection());
-
+    controller->deleteItemAt(resListBox->GetSelection());
 }
 
 void MyFrame::OnInsertItem(wxCommandEvent &event) {
     int position=resListBox->GetSelection();
     if(position==-1)position=0;
-    resListBox->Insert(newItemTextCtrl->GetValue(), position);
+    controller->insertItemAt(position,newItemTextCtrl->GetValue().ToStdString());
     newItemTextCtrl->Clear();
 }
 

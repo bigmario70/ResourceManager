@@ -18,7 +18,7 @@ void Model::unsubscribe(Observer* o) {
 }
 
 void Model::insertResourceAt(int position,const std::string& resource){
-    if ((0 <= position) && (position <resList.size())){
+    if ((0 <= position) && (position <=resList.size())){
         auto it = resList.begin();
         for(int i=0;i<position;i++){
             it++;
@@ -40,9 +40,10 @@ void Model::deleteResourceAt(int position){
 }
 
 void Model::setResList(const std::list<std::string>& newList){
-    resList.clear();
+    /*resList.clear();
     for(auto res:newList){
         this->resList.emplace_back(res);
-    }
+    }*/
+    resList=newList;
     notify();
 }

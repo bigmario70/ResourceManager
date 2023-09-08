@@ -20,11 +20,9 @@ public:
     void unsubscribe(Observer *o) override;
 
     void loadResources();
-    //void saveLines(const std::string& fn);
 
     int getProgress() const;
-    std::list<std::string> getLines() const;
-    //void setLines(const std::vector<std::string> & l);
+    const std::list<std::string>& getLines() const;
     const std::string &getFilename() const;
     bool isFault() const;
 
