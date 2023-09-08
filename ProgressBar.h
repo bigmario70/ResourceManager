@@ -29,8 +29,6 @@ public:
     void update() override{
         wxMilliSleep(250);
         this->Update(linesLoader->getProgress());
-        if(linesLoader->isFault())
-            wxMessageBox(wxT("Failed To Load"),wxT("Failed To Load"),wxOK|wxCENTRE);
     }
 private:
     ResourceLoader* linesLoader;

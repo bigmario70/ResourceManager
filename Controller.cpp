@@ -5,7 +5,6 @@
 #include "Controller.h"
 #include "ResourceLoader.h"
 #include "ProgressBar.h"
-#include "MyExceptions.h"
 
 int Controller::loadFromFile(const std::string & compFileName){
     std::list<std::string> resList;
@@ -14,9 +13,10 @@ int Controller::loadFromFile(const std::string & compFileName){
     myLoader.loadResources();
     if(myLoader.isFault())
         return -1;
-    else
+    else{
         model->setResList(myLoader.getLines());
         return 0;
+    }
 }
 
 int Controller::saveToFile(const std::string & compFileName){

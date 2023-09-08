@@ -1,5 +1,5 @@
-#ifndef LINESLOADER_SUBJECT_H
-#define LINESLOADER_SUBJECT_H
+#ifndef RESOURCELOADER_SUBJECT_H
+#define RESOURCELOADER_SUBJECT_H
 
 #include "Observer.h"
 
@@ -12,4 +12,4 @@ public:
 };
 
 
-#endif //LINESLOADER_SUBJECT_H
+#endif //RESOURCELOADER_SUBJECT_H

@@ -2,18 +2,17 @@
 // Created by mario on 21/06/23.
 //
 
-#ifndef LINESLOADER_RESOURCELOADER_H
-#define LINESLOADER_RESOURCELOADER_H
+#ifndef RESOURCELOADER_RESOURCELOADER_H
+#define RESOURCELOADER_RESOURCELOADER_H
 
 
 #include <list>
 #include <string>
 #include "Subject.h"
-#include <vector>
 
 class ResourceLoader : public Subject {
 public:
-    explicit ResourceLoader(const std::string& compFName ): completeFileName(compFName), progress(0), fault(false){}
+    explicit ResourceLoader(const std::string& compFileName ): completeFileName(compFileName), progress(0), fault(false){}
     virtual ~ResourceLoader () {}
     void notify() override;
     void subscribe(Observer *o) override;
@@ -22,17 +21,18 @@ public:
     void loadResources();
 
     int getProgress() const;
-    const std::list<std::string>& getLines() const;
-    const std::string &getFilename() const;
     bool isFault() const;
+    const std::string &getFilename() const;
+    const std::list<std::string>& getLines() const;
 
 private:
-    int progress;
+
     std::string completeFileName;
-    std::list<std::string> lines;
+    int progress;
     bool fault;
+    std::list<std::string> lines;
     std::list<Observer *> observers;
 };
 
 
-#endif //LINESLOADER_RESOURCELOADER_H
+#endif //RESOURCELOADER_RESOURCELOADER_H

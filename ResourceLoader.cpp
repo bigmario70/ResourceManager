@@ -3,9 +3,9 @@
 //
 
 #include <iostream>
-#include "ResourceLoader.h"
 #include <fstream>
 #include <string>
+#include "ResourceLoader.h"
 
 
 
@@ -63,10 +63,7 @@ void ResourceLoader::loadResources(){
         resourcesFile.getline(line, maxChar);
         lines.emplace_back(line);
         position=resourcesFile.tellg();
-        if(position==-1)
-            progress=100;
-        else
-            progress = static_cast<int> (position * 100 / length);
+        progress = static_cast<int> (position * 100 / length);
         notify();
     }
 

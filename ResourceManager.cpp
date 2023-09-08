@@ -11,7 +11,6 @@
 #include "Observer.h"
 #include "Model.h"
 #include "Controller.h"
-#include "MyExceptions.h"
 
 // Declaration of the Application Class
 class MyApp: public wxApp
@@ -143,10 +142,10 @@ void MyFrame::OnLoadFromFile(wxCommandEvent& event)
         return;
     wxString fileName=fileDialog.GetFilename();
     wxString dirName=fileDialog.GetDirectory();
-    std::string compFName=dirName.ToStdString()+"/"+fileName.ToStdString();
-    int exitCode = controller->loadFromFile(compFName);
+    std::string compFileName=dirName.ToStdString()+"/"+fileName.ToStdString();
+    int exitCode = controller->loadFromFile(compFileName);
     if (exitCode !=0 )
-        wxMessageBox(wxT("Failed To Open File: "+compFName),wxT("Error"),wxOK|wxCENTRE,this);
+        wxMessageBox(wxT("Failed To Open File: "+compFileName),wxT("Error"),wxOK|wxCENTRE,this);
 }
 
 void MyFrame::OnSaveToFile(wxCommandEvent &event) {
@@ -158,10 +157,10 @@ void MyFrame::OnSaveToFile(wxCommandEvent &event) {
         return;
     wxString fileName=fileDialog.GetFilename();
     wxString dirName=fileDialog.GetDirectory();
-    std::string compFName=dirName.ToStdString()+"/"+fileName.ToStdString();
-    int exitCode = controller->saveToFile(compFName);
+    std::string compFileName= dirName.ToStdString() + "/" + fileName.ToStdString();
+    int exitCode = controller->saveToFile(compFileName);
     if (exitCode !=0 )
-        wxMessageBox(wxT("Failed To Save To File: "+compFName),wxT("Error"),wxOK|wxCENTRE,this);
+        wxMessageBox(wxT("Failed To Save To File: " + compFileName), wxT("Error"), wxOK | wxCENTRE, this);
 }
 
 void MyFrame::OnDeleteItem(wxCommandEvent &event) {
