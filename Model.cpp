@@ -40,10 +40,6 @@ void Model::deleteResourceAt(int position){
 }
 
 void Model::setResList(const std::list<std::string>& newList){
-    /*resList.clear();
-    for(auto res:newList){
-        this->resList.emplace_back(res);
-    }*/
     resList=newList;
     notify();
 }
