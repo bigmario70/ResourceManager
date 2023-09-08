@@ -62,11 +62,12 @@ void ResourceLoader::loadResources(){
     while (!resourcesFile.eof()){
         resourcesFile.getline(line, maxChar);
         lines.emplace_back(line);
-        position=resourcesFile.tellg();
-        progress = static_cast<int> (position * 100 / length);
+        if(resourcesFile.tellg() ==-1)
+            progress=100;
+        else
+            progress = static_cast<int> (resourcesFile.tellg() * 100 / length);
         notify();
     }
-
     resourcesFile.close();
 
 }
