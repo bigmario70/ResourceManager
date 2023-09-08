@@ -7,15 +7,19 @@
 #include "ProgressBar.h"
 #include "MyExceptions.h"
 
-void Controller::loadFromFile(const std::string & compFName){
+int Controller::loadFromFile(const std::string & compFileName){
     std::list<std::string> resList;
-    ResourceLoader myLoader(compFName);
+    ResourceLoader myLoader(compFileName);
     ProgressBar myPB(&myLoader);
     myLoader.loadResources();
     model->setResList(myLoader.getLines());
+    if(myLoader.isFault())
+        return -1;
+    else
+        return 0;
 }
 
-void Controller::saveToFile(const std::string & filePath){
+int Controller::saveToFile(const std::string & compFileName){
 /*
 
     ResourceLoader myLoader2;
@@ -41,4 +45,5 @@ void Controller::saveToFile(const std::string & filePath){
     return;
     }
     */
+    return 0;
 }

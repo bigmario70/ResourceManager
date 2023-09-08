@@ -9,9 +9,16 @@
 
 class Controller {
 public:
-    Controller(Model* m): model(m){}
-    void loadFromFile(const std::string & filePath);
-    void saveToFile(const std::string & filePath);
+    explicit Controller(Model* m): model(m){}
+    int loadFromFile(const std::string & completeFileName);
+    int saveToFile(const std::string & completeFileName);
+    void deleteItemAt(int position){
+        model->deleteResourceAt(position);
+    }
+    void insertItemAt(int position,const std::string& resource){
+        model->insertResourceAt(position,resource);
+    }
+
 private:
     Model* model;
 };

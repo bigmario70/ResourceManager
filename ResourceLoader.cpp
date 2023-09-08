@@ -6,8 +6,7 @@
 #include "ResourceLoader.h"
 #include <fstream>
 #include <string>
-#include <stdexcept>
-#include "MyExceptions.h"
+
 
 
 void ResourceLoader::notify() {
@@ -27,7 +26,7 @@ int ResourceLoader::getProgress() const{
     return progress;
 }
 
-std::list<std::string> ResourceLoader::getLines() const{
+const std::list<std::string>& ResourceLoader::getLines() const{
     return lines;
 }
 
@@ -42,49 +41,44 @@ const std::string & ResourceLoader::getFilename() const {
 void ResourceLoader::loadResources(){
 
     const int maxChar = 100;
+    progress=0;
     fault=false;
     std::ifstream resourcesFile;
-    try{
-        resourcesFile.open(completeFileName, std::ifstream::in);
-    }
-    catch(const std::exception& e){
-            fault=true;
-            throw FailedToOpenFile(completeFileName);
-    }
+    resourcesFile.open(completeFileName, std::ifstream::in);
     if (!resourcesFile.is_open()){
         fault=true;
-        throw FailedToOpenFile(completeFileName);;
+        return;
     }
-    try{
-        //Leggo la lunghezza del file
-        resourcesFile.seekg (0, std::ifstream::end);
-        long int length = resourcesFile.tellg();
 
-        resourcesFile.seekg (0, std::ifstream::beg);
-        char line[maxChar];
-        progress=0;
+    //Read file length
+    resourcesFile.seekg (0, std::ifstream::end);
+    long int length = resourcesFile.tellg();
 
-        while (!resourcesFile.eof()){
-            resourcesFile.getline(line, maxChar);
-            lines.emplace_back(line);
-            if(resourcesFile.tellg() ==-1)
-                progress=100;
-            else
-                progress = static_cast<int> (resourcesFile.tellg() * 100 / length);
-            notify();
-        }
-        progress=100;
+    //Read file one line at a time
+    resourcesFile.seekg (0, std::ifstream::beg);
+    char line[maxChar];
+    long int position;
+    while (!resourcesFile.eof()){
+        resourcesFile.getline(line, maxChar);
+        lines.emplace_back(line);
+        position=resourcesFile.tellg();
+        if(position==-1)
+            progress=100;
+        else
+            progress = static_cast<int> (position * 100 / length);
         notify();
-        resourcesFile.close();
-
     }
+
+    resourcesFile.close();
+
+    /*}
     catch(const std::exception& e){
         fault=true;
-        notify();
         progress=0;
+        notify();
         lines.clear();
-        throw FailedToLoadResources(completeFileName);
-    }
+        //throw FailedToLoadResources(completeFileName);
+    }*/
 }
 /*
 void ResourceLoader::saveLines(const std::string& fn){
