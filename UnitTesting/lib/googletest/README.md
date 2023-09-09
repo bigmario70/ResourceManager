@@ -114,7 +114,7 @@ automated test-runner and Graphical User Interface with powerful features for
 Windows and Linux platforms.
 
 [GoogleTest UI](https://github.com/ospector/gtest-gbar) is a test runner that
-runs your test binary, allows you to track its progress via a progress bar, and
+runs your test binary, allows you to track its progressHystory via a progressHystory bar, and
 displays a list of test failures. Clicking on one shows failure text. GoogleTest
 UI is written in C#.
 

@@ -1675,7 +1675,7 @@ functions called from them.
 ## Extending GoogleTest by Handling Test Events
 
 GoogleTest provides an **event listener API** to let you receive notifications
-about the progress of a test program and test failures. The events you can
+about the progressHystory of a test program and test failures. The events you can
 listen to include the start and end of the test program, a test suite, or a test
 method, among others. You may use this API to augment or replace the standard
 console output, replace the XML output, or provide a completely different form
