@@ -1,4 +1,4 @@
-//  Resource Loader application with Observer Design Pattern
+//  Resource Manager Application with MVC Design Pattern
 //  Written by Mario Cei
 //  09/2023
 
