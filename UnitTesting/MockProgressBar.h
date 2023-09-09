@@ -5,7 +5,6 @@
 #ifndef RESOURCEMANAGER_MOCKPROGRESSBAR_H
 #define RESOURCEMANAGER_MOCKPROGRESSBAR_H
 
-#include <vector>
 #include "../Observer.h"
 #include "../ResourceLoader.h"
 
@@ -24,7 +23,7 @@ public:
         progressHistory[lineNumber++]= linesLoader->getProgress();
     }
 
-    const std::vector<int>&  getProgressHistory(){
+    int*  getProgressHistory(){
         return progressHistory;
     };
 
@@ -32,6 +31,6 @@ private:
     ResourceLoader* linesLoader;
     //int position[20];
     int lineNumber;
-    std::vector<int> progressHistory;
+    int progressHistory[11];
 };
 #endif //RESOURCEMANAGER_MOCKPROGRESSBAR_H

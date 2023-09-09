@@ -25,7 +25,7 @@ protected:
     ResourceLoader myLoader2;
     ResourceLoader myLoader3;
     MockProgressBar myPB;
-    std::vector<int> myPBProgressHistory;
+    int* myPBProgressHistory;
 };
 
 
@@ -40,6 +40,15 @@ TEST_F(ResourceLoaderSuite , LoadFromEmptyFile) {
 }
 
 TEST_F(ResourceLoaderSuite , ProgressCalculation) {
-    ASSERT_EQ(6, myPBProgressHistory[0]);
+    ASSERT_EQ(9, myPBProgressHistory[0]);
+    ASSERT_EQ(18, myPBProgressHistory[1]);
+    ASSERT_EQ(27, myPBProgressHistory[2]);
+    ASSERT_EQ(36, myPBProgressHistory[3]);
+    ASSERT_EQ(46, myPBProgressHistory[4]);
+    ASSERT_EQ(55, myPBProgressHistory[5]);
+    ASSERT_EQ(64, myPBProgressHistory[6]);
+    ASSERT_EQ(73, myPBProgressHistory[7]);
+    ASSERT_EQ(82, myPBProgressHistory[8]);
+    ASSERT_EQ(92, myPBProgressHistory[9]);
     ASSERT_EQ(100, myPBProgressHistory[10]);
 }
