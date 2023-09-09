@@ -5,14 +5,16 @@
 #ifndef RESOURCEMANAGER_MOCKPROGRESSBAR_H
 #define RESOURCEMANAGER_MOCKPROGRESSBAR_H
 
+#include <vector>
 #include "../Observer.h"
 #include "../ResourceLoader.h"
 
 class MockProgressBar : public Observer{
 public:
 
-    explicit MockProgressBar(ResourceLoader * ll): linesLoader(ll),lineNumber(0){
+    explicit MockProgressBar(ResourceLoader * ll): linesLoader(ll){
         linesLoader->subscribe(this);
+        progressHistory.reserve(11);
 
     }
     virtual ~MockProgressBar(){
@@ -20,17 +22,17 @@ public:
     }
 
     void update() override{
-        progressHistory[lineNumber++]= linesLoader->getProgress();
+        progressHistory.push_back(linesLoader->getProgress());
     }
 
-    int*  getProgressHistory(){
+    const std::vector<int>& getProgressHistory(){
         return progressHistory;
     };
 
 private:
     ResourceLoader* linesLoader;
     //int position[20];
-    int lineNumber;
-    int progressHistory[11];
+    //int lineNumber;
+    std::vector<int> progressHistory;
 };
 #endif //RESOURCEMANAGER_MOCKPROGRESSBAR_H

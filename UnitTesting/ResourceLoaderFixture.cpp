@@ -25,7 +25,7 @@ protected:
     ResourceLoader myLoader2;
     ResourceLoader myLoader3;
     MockProgressBar myPB;
-    int* myPBProgressHistory;
+    std::vector<int> myPBProgressHistory;
 };
 
 
